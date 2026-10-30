@@ -1,0 +1,68 @@
+[build-system]
+requires = ["hatchling>=1.24"]
+build-backend = "hatchling.build"
+
+[project]
+name = "halshield"
+version = "0.1.0"
+description = "Composable hallucination-prevention layers for LangGraph nodes"
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = [
+    "numpy>=1.26",
+    "openai>=1.40",
+    "python-dotenv>=1.0",
+]
+keywords = ["llm", "hallucination", "langgraph", "rag", "chain-of-verification"]
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "Typing :: Typed",
+]
+
+[project.optional-dependencies]
+langchain = ["langchain-core>=0.3"]
+examples = ["langgraph>=0.2", "pandas>=2.0"]
+dev = ["pytest>=8", "ruff>=0.6", "langgraph>=0.2", "pydantic>=2"]
+
+[tool.hatch.build.targets.wheel]
+packages = ["halshield"]
+
+[tool.hatch.build.targets.sdist]
+include = ["halshield", "tests", "examples", "README.md"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["examples", "tests"]
+
+[tool.ruff]
+line-length = 120
+target-version = "py310"
+
+[tool.ruff.lint]
+select = [
+    "E", "W",   # pycodestyle
+    "F",        # pyflakes
+    "I",        # isort
+    "N",        # pep8-naming
+    "UP",       # pyupgrade
+    "B",        # bugbear
+    "SIM",      # simplify
+    "C4",       # comprehensions
+    "RUF",      # ruff-specific
+    "ANN",      # type annotations
+    "D",        # docstrings
+    "PTH",      # pathlib
+]
+ignore = [
+    "D105", "D107",            # magic methods / __init__ are documented on the class
+    "D203", "D213",            # pick one docstring style (D211, D212)
+    "ANN401",                  # Any is intentional for LangGraph state objects and SDK clients
+]
+
+[tool.ruff.lint.per-file-ignores]
+"tests/*" = ["D", "ANN"]
+"examples/*" = ["D100"]
+
+[tool.ruff.lint.isort]
+known-first-party = ["halshield"]
+known-local-folder = ["demo", "evaluation", "fakes", "pipeline"]

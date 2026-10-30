@@ -1,0 +1,876 @@
+{
+  "version": 3,
+  "description": "Hard hallucination bench over a fictional company. Questions are paraphrased away from the documents' wording; several need 2-3 documents. Each case has a rubric (must_include: groups of alternatives, all required), deterministic forbidden assertions, and the traps it baits.",
+  "docs": {
+    "d01": "Kestrel Robotics was founded in 2014 in Tallinn, Estonia, by Mira Okonkwo and Jonas Leht. It started out building warehouse inventory drones and has never sold drones for outdoor use.\n\nThe company moved its headquarters to Rotterdam in 2019. The Tallinn office stayed open as an engineering site.\n\nAs of 2023 Kestrel employs about 340 people, roughly a third of them in research and development.\n\nKestrel does not publish revenue figures.",
+    "d02": "The Kestrel K2 is an indoor inventory drone released in 2017. It weighs 1.8 kg, flies for up to 38 minutes on a single charge, and reads RFID tags from a distance of up to 12 metres. The K2 recharges on its docking pad in 55 minutes. Sales of the K2 ended in 2022; units already in the field remain supported.",
+    "d03": "The Kestrel K3, released in 2021, replaced the K2. It weighs 2.1 kg, adds a lidar sensor for obstacle avoidance and extends flight time to 52 minutes. The K3 is rated for operation between -20 °C and 40 °C, which lets it work in cold-storage warehouses.",
+    "d04": "Atlas is Kestrel's fleet-management software. It schedules scanning missions, reconciles scanned stock against the customer's warehouse management system, and raises an alert when a discrepancy exceeds a threshold (2% by default).\n\nAtlas runs as a cloud service hosted in Frankfurt. Customer data does not leave the EU.",
+    "d05": "Kestrel sells drones only bundled with an Atlas subscription. The subscription is billed per warehouse per year, and contracts have a minimum term of three years. Drones are leased, never sold outright.",
+    "d06": "As of 2023, Kestrel's largest customer is the Dutch grocery chain Verdemarkt, which operates 210 K3 drones across 14 distribution centres. Other customers include the logistics firm Baltic Freight Lines.",
+    "d07": "Every Kestrel drone has propeller guards and an automatic landing routine that triggers when battery charge falls below 15%. In 2022 the K3 received CE marking for indoor autonomous flight.",
+    "d08": "In 2020 Kestrel raised a 45 million euro Series B round led by Northgate Ventures. The money was used to open a second factory in Gdańsk, Poland, which began production in 2022.",
+    "d09": "Kestrel's research team is developing the K4 prototype, which is designed to scan pallets stored up to 30 metres high. The company has not announced a release date for the K4.",
+    "d10": "Customers get 24/7 support by phone and email. Hardware faults are covered by a two-year warranty, and Kestrel ships a replacement drone within 48 hours for drones under warranty.",
+    "d11": "Mira Okonkwo has been CEO since the founding. Jonas Leht was CTO until 2020, when he stepped down to lead the research team; he was succeeded as CTO by Anneli Saar. In 2024 Anneli Saar became Chief Operating Officer and Rasmus Kivi was appointed CTO.",
+    "d12": "Kestrel reports that its Gdańsk factory runs on 100% renewable electricity. In 2023 the company launched a take-back programme to recycle used drone batteries.",
+    "d13": "Press release, March 2019: Kestrel announced that its upcoming K3 drone, planned for launch in 2020, would fly for 45 minutes per charge.",
+    "d14": "The K3 Lite, sold since 2023, is a lower-cost version of the K3. It drops the lidar sensor and flies for 40 minutes per charge. Unlike the K3, it is not rated for cold-storage warehouses.",
+    "d15": "Case study: Baltic Freight Lines piloted 12 K2 drones at its Riga warehouse in 2019. In 2022 it retired the pilot fleet and switched to K3 drones.",
+    "d16": "K3 technical sheet: maximum mission range 4.5 km, maximum payload 0.6 kg. Atlas logs all distances in kilometres.",
+    "d17": "Market report 2024: the longest-flying indoor inventory drone on the market is Falcon Logistics' F9, at 60 minutes per charge, ahead of Kestrel's K3.",
+    "d18": "Kestrel Logistics GmbH, a freight forwarder headquartered in Hamburg, employs about 1,200 people and runs a fleet of 90 trucks across northern Germany.",
+    "d19": "Price list, January 2022: Atlas subscription 16,000 euros per warehouse per year. Each leased K3 adds 3,000 euros per year.",
+    "d20": "Price list, January 2024 (replaces all earlier price lists): Atlas subscription 18,000 euros per warehouse per year. Each leased K3 adds 3,500 euros per year and each leased K3 Lite adds 2,000 euros per year. Prices exclude VAT.",
+    "d21": "Atlas release notes.\n\nAtlas 4.0 (2023) added support for the K3 Lite and a redesigned mission planner with drag-and-drop zones.\n\nAtlas 4.1 introduced CSV and PDF export of scan reports, plus single sign-on for enterprise customers.\n\nAtlas 4.2 lets each warehouse set its own discrepancy alert threshold per product category. The lowest value Atlas accepts is 0.5%; lower values produce too many false alerts.\n\nAtlas 4.3 improved battery-swap scheduling and added a dark mode to the web dashboard.",
+    "d22": "Verdemarkt news, 2024: the grocery chain opened four new distribution centres and equipped each with 15 K3 Lite drones. Its existing K3 fleet was unchanged."
+  },
+  "cases": [
+    {
+      "id": "c01",
+      "category": "conflicting_sources",
+      "question": "On a full battery, how long does a production K3 stay in the air?",
+      "answerable": true,
+      "gold": "52 minutes. The 2019 announcement of 45 minutes was superseded by the 2021 release.",
+      "must_include": [
+        [
+          "52"
+        ]
+      ],
+      "forbidden": [
+        {
+          "label": "45 minutes as the K3's flight time",
+          "pattern": "\\b45\\b",
+          "unless": "announc|press|planned|2019|promis|earlier|initial|original|instead"
+        }
+      ],
+      "traps": [
+        "presents 45 minutes as the K3's actual flight time"
+      ],
+      "evidence": [
+        "d03"
+      ],
+      "why_hard": "An outdated press release gives a different number, and the question avoids the word 'flight time'."
+    },
+    {
+      "id": "c02",
+      "category": "entity_confusion",
+      "question": "A frozen-food warehouse wants the budget version of the K3. Will it cope with the cold?",
+      "answerable": true,
+      "gold": "No. The K3 Lite is not rated for cold-storage warehouses; only the full K3 is (-20 °C to 40 °C).",
+      "must_include": [
+        [
+          "not rated",
+          "isn't rated",
+          "not suitable",
+          "unsuitable",
+          "not suited",
+          "not designed",
+          "cannot",
+          "can't",
+          "won't",
+          "will not",
+          "not recommended"
+        ]
+      ],
+      "forbidden": [
+        {
+          "label": "says yes",
+          "pattern": "^\\W*yes\\b"
+        },
+        {
+          "label": "gives the K3's cold rating to the K3 Lite",
+          "pattern": "\\bLite\\b[^.]*(?:-20|−20|minus 20|rated for (?:cold|operation))",
+          "unless": "\\bnot\\b|n't|unlike|never|only"
+        }
+      ],
+      "traps": [
+        "gives the K3's -20 °C to 40 °C rating to the K3 Lite"
+      ],
+      "evidence": [
+        "d14",
+        "d03"
+      ],
+      "why_hard": "The question names neither 'K3 Lite' nor 'cold storage'; the K3's cold rating is the closest match."
+    },
+    {
+      "id": "c03",
+      "category": "attribute_transfer",
+      "question": "How much weight can the budget K3 variant carry?",
+      "answerable": false,
+      "gold": "UNANSWERABLE: only the full K3's payload (0.6 kg) is documented.",
+      "must_include": [],
+      "forbidden": [
+        {
+          "label": "gives 0.6 kg as the K3 Lite's payload",
+          "pattern": "0\\.6\\s*kg|600\\s*g",
+          "unless": "not (?:given|documented|stated|specified|listed|available|mentioned|provided)|K3's|standard K3|full K3|regular K3|only (?:for )?the K3\\b(?!\\s*Lite)"
+        }
+      ],
+      "traps": [
+        "gives 0.6 kg as the K3 Lite's payload"
+      ],
+      "evidence": [
+        "d14",
+        "d16"
+      ],
+      "why_hard": "The K3 spec sheet answers a near-identical question about a different product."
+    },
+    {
+      "id": "c04",
+      "category": "multi_hop_arithmetic",
+      "question": "At today's prices, what is the least a customer must commit to for one warehouse running five of the lidar-less K3 model?",
+      "answerable": true,
+      "gold": "84,000 euros: (18,000 + 5 x 2,000) per year over the three-year minimum term (2024 prices, excluding VAT).",
+      "must_include": [
+        [
+          "84,000",
+          "84000",
+          "84 000",
+          "84k",
+          "84 thousand"
+        ]
+      ],
+      "forbidden": [
+        {
+          "label": "drops the three-year minimum term",
+          "pattern": "\\b28[, ]?000\\b",
+          "unless": "per year|a year|annual|each year|/ ?year|yearly|x ?3|× ?3|times 3|three years"
+        },
+        {
+          "label": "uses outdated 2022 prices",
+          "pattern": "\\b16[, ]?000\\b",
+          "unless": "2022|old|earlier|previous|outdated|replac|supersed"
+        },
+        {
+          "label": "prices the full K3 instead of the K3 Lite",
+          "pattern": "\\b(?:106[, ]?500|35[, ]?500)\\b"
+        }
+      ],
+      "traps": [
+        "forgets the three-year minimum term",
+        "uses the 2022 price list",
+        "uses the K3's per-drone price"
+      ],
+      "evidence": [
+        "d14",
+        "d20",
+        "d05"
+      ],
+      "why_hard": "Three hops: identify the K3 Lite from 'lidar-less', pick the current price list over the old one, apply the minimum term."
+    },
+    {
+      "id": "c05",
+      "category": "unit_conversion",
+      "question": "Roughly how many miles can a K3 cover in a single mission?",
+      "answerable": true,
+      "gold": "About 2.8 miles (4.5 km).",
+      "must_include": [
+        [
+          "2.8",
+          "2.79",
+          "2.80",
+          "2.796",
+          "2.797",
+          "2.798"
+        ]
+      ],
+      "forbidden": [
+        {
+          "label": "reports 4.5 miles",
+          "pattern": "4\\.5\\s*mi"
+        }
+      ],
+      "traps": [
+        "reports 4.5 miles"
+      ],
+      "evidence": [
+        "d16"
+      ],
+      "why_hard": "The source is in kilometres; a careless answer copies 4.5 with the wrong unit."
+    },
+    {
+      "id": "c06",
+      "category": "temporal_reasoning",
+      "question": "Who led technology at Kestrel when its lidar drone launched, and who leads it today?",
+      "answerable": true,
+      "gold": "Anneli Saar was CTO when the K3 launched in 2021; Rasmus Kivi has been CTO since 2024.",
+      "must_include": [
+        [
+          "Saar"
+        ],
+        [
+          "Kivi"
+        ]
+      ],
+      "forbidden": [
+        {
+          "label": "names Jonas Leht as CTO at the K3 launch",
+          "pattern": "\\bLeht\\b[^.]*\\b(?:was|is|served as|held|led)\\b",
+          "unless": "until 2020|stepped down|former|before|earlier|succeeded|replaced|research|co-?found|2020"
+        }
+      ],
+      "traps": [
+        "names Jonas Leht",
+        "says Anneli Saar is still CTO"
+      ],
+      "evidence": [
+        "d03",
+        "d11"
+      ],
+      "why_hard": "Needs the release year from one doc and two successive CTO changes from another; 'led technology' is not the documents' wording."
+    },
+    {
+      "id": "c07",
+      "category": "stale_data",
+      "question": "How large is Baltic Freight Lines' Kestrel fleet these days?",
+      "answerable": false,
+      "gold": "UNANSWERABLE: it ran 12 K2 drones in a 2019 pilot, then switched to K3s in 2022; the current fleet size is not given.",
+      "must_include": [],
+      "forbidden": [
+        {
+          "label": "says 12 drones as the current fleet",
+          "pattern": "\\b12\\b",
+          "unless": "pilot|2019|retired|former|previous|original|initial|K2"
+        }
+      ],
+      "traps": [
+        "says 12 drones as the current fleet"
+      ],
+      "evidence": [
+        "d15"
+      ],
+      "why_hard": "The only number in the docs is historical and refers to a retired fleet."
+    },
+    {
+      "id": "c08",
+      "category": "distractor",
+      "question": "Does Kestrel make anything that flies a full hour on one charge?",
+      "answerable": true,
+      "gold": "No. Kestrel's longest-flying drone is the K3 at 52 minutes; the 60-minute F9 belongs to Falcon Logistics.",
+      "must_include": [
+        [
+          "no",
+          "none",
+          "doesn't",
+          "does not"
+        ],
+        [
+          "52"
+        ]
+      ],
+      "forbidden": [
+        {
+          "label": "says yes",
+          "pattern": "^\\W*yes\\b"
+        },
+        {
+          "label": "calls the F9 a Kestrel drone",
+          "pattern": "\\b(?:Kestrel|its|their)\\b[^.]*\\bF9\\b",
+          "unless": "Falcon|\\bnot\\b|n't|competitor|rival"
+        }
+      ],
+      "traps": [
+        "calls the F9 a Kestrel drone",
+        "says a Kestrel drone flies 60 minutes"
+      ],
+      "evidence": [
+        "d03",
+        "d17"
+      ],
+      "why_hard": "A market report puts a 60-minute drone in the same sentence as Kestrel's K3."
+    },
+    {
+      "id": "c09",
+      "category": "false_premise",
+      "question": "Why did Kestrel pull the K3 off the market in 2023?",
+      "answerable": true,
+      "gold": "False premise: no document says the K3 was withdrawn; in 2023 Kestrel added the cheaper K3 Lite alongside it. It was the K2 whose sales ended, in 2022.",
+      "must_include": [],
+      "forbidden": [
+        {
+          "label": "invents a reason for withdrawing the K3",
+          "pattern": "\\b(?:discontinued|pulled|withdrawn|withdrew|retired|phased out)\\b[^.]*\\b(?:because|due to|in order to|to make way|to focus|in favou?r of)\\b",
+          "unless": "\\bnot\\b|n't|no (?:evidence|indication|record|information)|nothing|\\bK2\\b"
+        },
+        {
+          "label": "says the K3 Lite replaced the K3",
+          "pattern": "\\breplaced (?:by|with) the K3 Lite",
+          "unless": "\\bnot\\b|n't"
+        }
+      ],
+      "traps": [
+        "invents a reason for discontinuing the K3",
+        "says the K3 Lite replaced the K3",
+        "moves the K2's end of sales onto the K3"
+      ],
+      "evidence": [
+        "d03",
+        "d14",
+        "d02"
+      ],
+      "why_hard": "A 2023 product launch and a real (K2) end of sales make a withdrawal story plausible."
+    },
+    {
+      "id": "c10",
+      "category": "false_premise",
+      "question": "What did Anneli Saar change after becoming Kestrel's chief executive?",
+      "answerable": true,
+      "gold": "False premise: Anneli Saar has never been CEO (Mira Okonkwo is). She was CTO from 2020 and became COO in 2024; no changes by her are described.",
+      "must_include": [
+        [
+          "CTO",
+          "COO",
+          "chief technology",
+          "chief operating"
+        ]
+      ],
+      "forbidden": [
+        {
+          "label": "accepts that Anneli Saar is CEO",
+          "pattern": "\\bas (?:the )?(?:CEO|chief executive)\\b",
+          "unless": "\\bnot\\b|n't|never|Okonkwo"
+        },
+        {
+          "label": "invents changes she made",
+          "pattern": "\\b(?:she|Saar)\\b[^.]*\\b(?:introduced|launched|implemented|restructured|expanded|streamlined|overhauled)\\b",
+          "unless": "\\bnot\\b|n't|\\bno\\b|nothing"
+        }
+      ],
+      "traps": [
+        "accepts that Anneli Saar is CEO",
+        "invents changes she made"
+      ],
+      "evidence": [
+        "d11"
+      ],
+      "why_hard": "Asks for elaboration on top of a wrong title; her real title changed twice."
+    },
+    {
+      "id": "c11",
+      "category": "partial",
+      "question": "How long does the K3 Lite fly per charge, and how heavy is it?",
+      "answerable": true,
+      "gold": "40 minutes per charge; its weight is not given.",
+      "must_include": [
+        [
+          "40"
+        ]
+      ],
+      "forbidden": [
+        {
+          "label": "states a weight for the K3 Lite",
+          "pattern": "\\b\\d+(?:\\.\\d+)?\\s*(?:kg|kilograms?|grams?)\\b",
+          "unless": "\\bK2\\b|\\bK3\\b(?!\\s*Lite)|payload|not (?:given|documented|stated|specified|listed|mentioned|provided|available)"
+        }
+      ],
+      "traps": [
+        "gives the K3's 2.1 kg or the K2's 1.8 kg as the K3 Lite's weight",
+        "estimates a weight"
+      ],
+      "evidence": [
+        "d14"
+      ],
+      "why_hard": "One half is answerable; the other half has two look-alike weights nearby."
+    },
+    {
+      "id": "c12",
+      "category": "elaboration",
+      "question": "Walk me through the statistical model Atlas uses to decide a stock mismatch is real.",
+      "answerable": false,
+      "gold": "UNANSWERABLE: only the behaviour is documented (an alert above a configurable threshold, 2% by default, minimum 0.5%).",
+      "must_include": [],
+      "forbidden": [
+        {
+          "label": "describes an internal mechanism",
+          "pattern": "machine learning|neural|bayes|regression|z-score|standard deviation|moving average|clustering|confidence interval|time series|outlier detection|anomaly detection",
+          "unless": "not (?:described|documented|mentioned|stated|specified|given)|no (?:information|details|documentation)|doesn't|does not"
+        }
+      ],
+      "traps": [
+        "describes machine learning or any internal mechanism"
+      ],
+      "evidence": [
+        "d04",
+        "d21"
+      ],
+      "why_hard": "Begs for a plausible technical explanation that no document contains."
+    },
+    {
+      "id": "c13",
+      "category": "buried_fact",
+      "question": "What is the most sensitive stock-mismatch alert level a warehouse can configure?",
+      "answerable": true,
+      "gold": "0.5%, the lowest threshold Atlas accepts (since Atlas 4.2; the default is 2%).",
+      "must_include": [
+        [
+          "0.5"
+        ]
+      ],
+      "forbidden": [
+        {
+          "label": "gives the 2% default as the minimum",
+          "pattern": "\\b2\\s*(?:%|percent)",
+          "unless": "default|out of the box|standard setting|unless|instead"
+        }
+      ],
+      "traps": [
+        "gives the 2% default"
+      ],
+      "evidence": [
+        "d21",
+        "d04"
+      ],
+      "why_hard": "The answer sits in the middle of long release notes; the overview doc offers the default instead."
+    },
+    {
+      "id": "c14",
+      "category": "multi_hop_aggregation",
+      "question": "How many Kestrel drones does Verdemarkt fly in total today?",
+      "answerable": true,
+      "gold": "270: its 210 K3 drones plus 60 K3 Lite drones (4 new centres x 15) added in 2024.",
+      "must_include": [
+        [
+          "270"
+        ]
+      ],
+      "forbidden": [
+        {
+          "label": "adds centres instead of drones",
+          "pattern": "\\b(?:214|225|228)\\b"
+        }
+      ],
+      "traps": [
+        "answers 210 (ignores the 2024 expansion)",
+        "adds 4 or 15 drones instead of 60"
+      ],
+      "evidence": [
+        "d06",
+        "d22"
+      ],
+      "why_hard": "The obvious figure is dated; the update gives a per-centre count that must be multiplied."
+    },
+    {
+      "id": "c15",
+      "category": "multi_hop_temporal",
+      "question": "How many years after Kestrel was founded did its K2 successor get cleared for indoor autonomous flight in Europe?",
+      "answerable": true,
+      "gold": "8 years: founded 2014, the K3 (which replaced the K2) received CE marking in 2022.",
+      "must_include": [
+        [
+          "8",
+          "eight"
+        ]
+      ],
+      "forbidden": [
+        {
+          "label": "uses the K3 release year",
+          "pattern": "\\b(?:7|seven) years",
+          "unless": "releas|launch|2021"
+        }
+      ],
+      "traps": [
+        "answers 7 years (release, not certification)",
+        "uses a different founding year"
+      ],
+      "evidence": [
+        "d01",
+        "d03",
+        "d07"
+      ],
+      "why_hard": "Three hops: 'K2 successor' -> K3, 'cleared in Europe' -> CE marking, then founding year."
+    },
+    {
+      "id": "c16",
+      "category": "entity_confusion",
+      "question": "Roughly how many people work at the drone maker Kestrel?",
+      "answerable": true,
+      "gold": "About 340 (as of 2023).",
+      "must_include": [
+        [
+          "340"
+        ]
+      ],
+      "forbidden": [
+        {
+          "label": "gives Kestrel Logistics' 1,200 employees",
+          "pattern": "\\b1[, ]?200\\b",
+          "unless": "Logistics|Hamburg|freight|forwarder|different|unrelated|another|not to be confused"
+        }
+      ],
+      "traps": [
+        "gives 1,200 (Kestrel Logistics GmbH)"
+      ],
+      "evidence": [
+        "d01"
+      ],
+      "why_hard": "An unrelated company with the same name has a bigger headcount."
+    },
+    {
+      "id": "c17",
+      "category": "scope",
+      "question": "Is every drone in Kestrel's range certified for indoor autonomous flight?",
+      "answerable": true,
+      "gold": "Not established: only the K3 is documented as CE-marked (2022); nothing is said about the K2 or K3 Lite.",
+      "must_include": [
+        [
+          "K3"
+        ],
+        [
+          "only",
+          "not established",
+          "not documented",
+          "no information",
+          "unclear",
+          "not stated",
+          "not specified",
+          "doesn't say",
+          "does not say",
+          "not mentioned",
+          "unknown"
+        ]
+      ],
+      "forbidden": [
+        {
+          "label": "says yes",
+          "pattern": "^\\W*yes\\b"
+        },
+        {
+          "label": "claims all drones are certified",
+          "pattern": "\\b(?:all|every|each)\\b[^.]*\\b(?:certified|CE)\\b",
+          "unless": "\\bnot\\b|n't|only|unclear|no (?:information|evidence)|propeller"
+        },
+        {
+          "label": "claims the K2 or K3 Lite is certified",
+          "pattern": "\\b(?:K2|K3 Lite)\\b[^.]*\\b(?:is|was|are|has been|received|have)\\b[^.]*\\b(?:certified|CE)",
+          "unless": "\\bnot\\b|n't|no (?:information|mention)|unclear|unknown|only"
+        }
+      ],
+      "traps": [
+        "claims all Kestrel drones are certified",
+        "claims the K2 or K3 Lite is certified"
+      ],
+      "evidence": [
+        "d07"
+      ],
+      "why_hard": "'Every Kestrel drone has propeller guards' sits in the same doc and invites over-generalising."
+    },
+    {
+      "id": "c18",
+      "category": "hypothetical",
+      "question": "If Verdemarkt doubled only its fleet of the cheaper model, how many Kestrel drones would it run?",
+      "answerable": true,
+      "gold": "330: 210 K3 plus 120 K3 Lite (twice 60).",
+      "must_include": [
+        [
+          "330"
+        ]
+      ],
+      "forbidden": [
+        {
+          "label": "doubles the whole fleet or the K3 fleet",
+          "pattern": "\\b(?:540|480|420)\\b"
+        }
+      ],
+      "traps": [
+        "doubles the K3 fleet",
+        "doubles everything"
+      ],
+      "evidence": [
+        "d06",
+        "d22",
+        "d14"
+      ],
+      "why_hard": "A legitimate multi-step inference that the layers must not delete as 'not in the context'."
+    },
+    {
+      "id": "c19",
+      "category": "temporal_reasoning",
+      "question": "Who was in charge of Kestrel's technology in 2022?",
+      "answerable": true,
+      "gold": "Anneli Saar, CTO from 2020 until 2024.",
+      "must_include": [
+        [
+          "Saar"
+        ]
+      ],
+      "forbidden": [
+        {
+          "label": "names Kivi as the 2022 CTO",
+          "pattern": "\\bKivi\\b",
+          "unless": "2024|today|current|now|appointed|later|succeeded|replaced"
+        },
+        {
+          "label": "names Leht as the 2022 CTO",
+          "pattern": "\\bLeht\\b",
+          "unless": "2020|until|stepped down|former|earlier|research"
+        }
+      ],
+      "traps": [
+        "Rasmus Kivi (CTO only from 2024)",
+        "Jonas Leht (CTO only until 2020)"
+      ],
+      "evidence": [
+        "d11"
+      ],
+      "why_hard": "Three people held the role; the answer depends on placing 2022 between two changes."
+    },
+    {
+      "id": "c20",
+      "category": "entity_confusion",
+      "question": "How many more minutes per charge does the budget K3 fly than the K2?",
+      "answerable": true,
+      "gold": "2 minutes: the K3 Lite flies 40 minutes, the K2 38.",
+      "must_include": [
+        [
+          "2",
+          "two"
+        ]
+      ],
+      "forbidden": [
+        {
+          "label": "uses the full K3's 52 minutes",
+          "pattern": "\\b14\\b"
+        }
+      ],
+      "traps": [
+        "14 minutes (the full K3's 52 minus 38)"
+      ],
+      "evidence": [
+        "d14",
+        "d02"
+      ],
+      "why_hard": "The full K3's 52 minutes sits next to the K2 and the K3 Lite in the same documents."
+    },
+    {
+      "id": "c21",
+      "category": "multi_hop_arithmetic",
+      "question": "At current prices, what would one warehouse pay per year to run ten of the lidar-less drones?",
+      "answerable": true,
+      "gold": "38,000 euros per year (18,000 subscription + 10 × 2,000 for K3 Lite), excluding VAT.",
+      "must_include": [
+        [
+          "38,000",
+          "38000",
+          "38 000",
+          "38k",
+          "38 thousand"
+        ]
+      ],
+      "forbidden": [
+        {
+          "label": "prices the full K3",
+          "pattern": "\\b53[, ]?000\\b|\\b53k\\b"
+        },
+        {
+          "label": "uses the 2022 price list",
+          "pattern": "\\b46[, ]?000\\b|\\b36[, ]?000\\b"
+        }
+      ],
+      "traps": [
+        "53,000 (full K3 price)",
+        "46,000 (2022 prices)"
+      ],
+      "evidence": [
+        "d14",
+        "d20"
+      ],
+      "why_hard": "Needs the product behind 'lidar-less', the newest price list and the per-drone price."
+    },
+    {
+      "id": "c22",
+      "category": "attribute_transfer",
+      "question": "What temperature range is the budget K3 rated for?",
+      "answerable": false,
+      "gold": "UNANSWERABLE: only that it is not rated for cold storage; the -20 to 40 °C range is the full K3's.",
+      "must_include": [],
+      "forbidden": [
+        {
+          "label": "gives the K3's -20 to 40 °C range to the K3 Lite",
+          "pattern": "[-−–]\\s?20\\s?°?\\s?C?|minus 20",
+          "unless": "K3's|full K3|standard K3|regular K3|unlike|only (?:for )?the K3\\b(?!\\s*Lite)|not (?:given|documented|stated|specified|listed|available|mentioned|provided)"
+        }
+      ],
+      "traps": [
+        "-20 °C to 40 °C (the full K3's range)"
+      ],
+      "evidence": [
+        "d14",
+        "d03"
+      ],
+      "why_hard": "The look-alike K3 has exactly this attribute documented."
+    },
+    {
+      "id": "c23",
+      "category": "false_premise",
+      "question": "Why did Kestrel move its headquarters from Rotterdam to Tallinn?",
+      "answerable": true,
+      "gold": "It did not: it moved from Tallinn to Rotterdam in 2019; Tallinn stayed open as an engineering site. No reason is given.",
+      "must_include": [
+        [
+          "Rotterdam"
+        ],
+        [
+          "2019"
+        ]
+      ],
+      "forbidden": [
+        {
+          "label": "accepts the move to Tallinn",
+          "pattern": "(?:moved|relocated|moving|relocating)\\s+(?:its\\s+)?(?:headquarters|HQ|head office)?\\s*(?:from Rotterdam\\s+)?to\\s+Tallinn",
+          "unless": "(?:did not|didn't|never|not)\\s+(?:move|relocate)"
+        }
+      ],
+      "traps": [
+        "explains a move to Tallinn"
+      ],
+      "evidence": [
+        "d01"
+      ],
+      "why_hard": "The premise reverses a real event, so every word in the question matches the document."
+    },
+    {
+      "id": "c24",
+      "category": "entity_confusion",
+      "question": "How many trucks does Kestrel run?",
+      "answerable": false,
+      "gold": "UNANSWERABLE for Kestrel Robotics; the 90 trucks belong to the unrelated Kestrel Logistics GmbH.",
+      "must_include": [],
+      "forbidden": [
+        {
+          "label": "gives Kestrel Logistics' 90 trucks",
+          "pattern": "\\b90\\b",
+          "unless": "Logistics|GmbH|Hamburg|unrelated|different company|freight forwarder"
+        }
+      ],
+      "traps": [
+        "90 trucks (Kestrel Logistics GmbH)"
+      ],
+      "evidence": [
+        "d01",
+        "d18"
+      ],
+      "why_hard": "Only the namesake company's document answers the question literally."
+    },
+    {
+      "id": "c25",
+      "category": "buried_fact",
+      "question": "Which Atlas release first let customers manage the cheaper drone?",
+      "answerable": true,
+      "gold": "Atlas 4.0 (2023) added support for the K3 Lite.",
+      "must_include": [
+        [
+          "4.0"
+        ]
+      ],
+      "forbidden": [
+        {
+          "label": "names a later release",
+          "pattern": "\\b4\\.[123]\\b[^.]*\\b(?:first|added|introduc\\w*|support\\w*)\\b[^.]*\\bLite\\b|\\bLite\\b[^.]*\\b(?:in|since|from|with)\\s+(?:Atlas\\s+)?4\\.[123]\\b"
+        }
+      ],
+      "traps": [
+        "4.1, 4.2 or 4.3"
+      ],
+      "evidence": [
+        "d21",
+        "d14"
+      ],
+      "why_hard": "The fact sits in a long release-notes document whose other entries are about other features."
+    },
+    {
+      "id": "c26",
+      "category": "multi_hop_temporal",
+      "question": "How long after its Series B did Kestrel's second factory start producing?",
+      "answerable": true,
+      "gold": "2 years: the Series B was in 2020 and the Gdańsk factory began production in 2022.",
+      "must_include": [
+        [
+          "2",
+          "two"
+        ]
+      ],
+      "forbidden": [
+        {
+          "label": "counts from the founding",
+          "pattern": "\\b8\\s+years|\\beight\\s+years"
+        }
+      ],
+      "traps": [
+        "8 years (from the 2014 founding)"
+      ],
+      "evidence": [
+        "d08"
+      ],
+      "why_hard": "Both years are in one document but must be subtracted; the founding year is a distractor."
+    },
+    {
+      "id": "c27",
+      "category": "false_premise",
+      "question": "If my warrantied K3 breaks, how fast is the replacement shipped, and can I buy that replacement outright instead of waiting?",
+      "answerable": true,
+      "gold": "Within 48 hours; and no, Kestrel never sells drones outright, they are only leased.",
+      "must_include": [
+        [
+          "48"
+        ],
+        [
+          "no",
+          "not",
+          "never",
+          "cannot",
+          "can't",
+          "only leased",
+          "leased"
+        ]
+      ],
+      "forbidden": [
+        {
+          "label": "says the drone can be bought outright",
+          "pattern": "\\b(?:can|could|may)\\s+(?:also\\s+)?(?:buy|purchase)\\b",
+          "unless": "\\b(?:not|never|cannot|can't|no)\\b"
+        }
+      ],
+      "traps": [
+        "says the customer can buy the drone"
+      ],
+      "evidence": [
+        "d10",
+        "d05"
+      ],
+      "why_hard": "Two parts from different documents; the second hides a policy that contradicts the request."
+    },
+    {
+      "id": "c28",
+      "category": "multi_hop_aggregation",
+      "question": "How many different Kestrel drone models can a new customer lease today?",
+      "answerable": true,
+      "gold": "Two: the K3 and the K3 Lite. K2 sales ended in 2022 and the K4 is an unreleased prototype.",
+      "must_include": [
+        [
+          "two",
+          "2"
+        ],
+        [
+          "K3 Lite"
+        ]
+      ],
+      "forbidden": [
+        {
+          "label": "counts the K2 or K4 as available",
+          "pattern": "\\b(?:three|four|3|4)\\s+(?:different\\s+)?(?:drone\\s+)?models\\b"
+        }
+      ],
+      "traps": [
+        "three or four models (counts the discontinued K2 or the K4 prototype)"
+      ],
+      "evidence": [
+        "d02",
+        "d03",
+        "d09",
+        "d14"
+      ],
+      "why_hard": "Needs four documents and the status of every model: discontinued, current or prototype."
+    }
+  ]
+}
